@@ -1,5 +1,5 @@
 /*
- * Arabic RTL for Claude — popup logic.
+ * RTLify for Claude — popup logic.
  * Reads/writes settings from chrome.storage.sync and handles the (Arabic /
  * English) interface localization. No network access.
  */
@@ -11,8 +11,8 @@
 
   const STRINGS = {
     ar: {
-      title: "Arabic RTL for Claude",
-      tagline: "عرض النص العربي من اليمين إلى اليسار في Claude",
+      title: "RTLify for Claude",
+      tagline: "عرض النصوص من اليمين إلى اليسار في Claude",
       enable: "تفعيل الإضافة",
       enableInput: "تفعيل في مربع الكتابة",
       language: "لغة الواجهة",
@@ -20,10 +20,11 @@
       english: "English",
       openSource: "مفتوح المصدر على GitHub",
       sourceTitle: "اعرض الكود المصدري على GitHub — يعمل محليًا بالكامل، بدون جمع أي بيانات",
+      coffeeTitle: "ادعمني بكوب قهوة ☕",
     },
     en: {
-      title: "Arabic RTL for Claude",
-      tagline: "Show Arabic text right-to-left in Claude",
+      title: "RTLify for Claude",
+      tagline: "Show right-to-left text in Claude",
       enable: "Enable extension",
       enableInput: "Enable in the input box",
       language: "Interface language",
@@ -31,6 +32,7 @@
       english: "English",
       openSource: "Open source on GitHub",
       sourceTitle: "View the source code on GitHub — runs fully locally, collects no data",
+      coffeeTitle: "Buy me a coffee",
     },
   };
 

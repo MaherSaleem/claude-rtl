@@ -1,56 +1,53 @@
 /*
- * Arabic RTL for Claude — content script
+ * RTL for Claude — content script
  *
- * Detects Arabic text inside the Claude AI page and flips the affected
- * block elements (and, optionally, the message composer) to right-to-left.
+ * Detects right-to-left (Arabic-script) text inside Claude AI message content
+ * and flips the affected elements to RTL — and, optionally, the composer.
  *
  * Design goals:
- *   - Only touch elements that actually contain Arabic. Anything that is
- *     pure English / UI chrome is left exactly as Claude renders it.
- *   - Keep code, inline code and math (KaTeX) in their natural left-to-right
- *     reading order even inside an RTL paragraph.
- *   - Re-apply continuously as Claude streams responses and as the SPA swaps
- *     views, using a debounced MutationObserver.
+ *   - Only touch CONVERSATION content (assistant responses + user messages)
+ *     and the input box. The sidebar, top bar and menus are never affected.
+ *   - An element that contains RTL text is set to dir="rtl" as a whole, so
+ *     Arabic/Persian/Urdu sentences with inline English, URLs or code still
+ *     read right-to-left (the browser keeps the LTR runs inline via bidi).
+ *   - Keep code, inline code and math (KaTeX) left-to-right via content.css.
+ *   - Re-apply continuously as Claude streams responses and swaps views, using
+ *     a debounced MutationObserver.
  *   - Everything runs locally. Nothing is read from or sent to the network.
  *
- * Shared settings (defaults, storage area) come from constants.js, which the
- * manifest loads immediately before this file.
+ * Shared settings come from constants.js and detection from detect.js, both
+ * loaded by the manifest immediately before this file.
  */
 
 (() => {
   "use strict";
 
+  const detectDir = RTL_DETECT.detectDir; // (text) -> "rtl" | null
   let settings = { ...RTL_CONFIG.defaults };
 
-  // ---- Direction detection -------------------------------------------------
-  // The detection logic (Arabic Unicode ranges + majority vote) lives in
-  // detect.js so it can be unit-tested under Node. The manifest loads it
-  // immediately before this file, exposing RTL_DETECT on the shared global.
-  //   detectDir(text) -> "rtl" | "ltr" | null
-  const detectDir = RTL_DETECT.detectDir;
+  // ---- Claude DOM hooks ----------------------------------------------------
+  // These class/attribute selectors are the one place tied to Claude's markup;
+  // they are the maintenance point if RTL ever stops working after a Claude UI
+  // update. Scoping to them is what keeps the sidebar and chrome untouched.
+  const RESPONSE_ROOTS = ".font-claude-message, .font-claude-response-body, .standard-markdown";
+  const USER_MESSAGE = ".whitespace-pre-wrap.break-words";
+  const MESSAGE_SCOPE = RESPONSE_ROOTS + ", " + USER_MESSAGE;
 
-  // ---- Selectors -----------------------------------------------------------
+  // Block elements inside a message whose direction we also set individually
+  // (for per-paragraph alignment and correct list-marker / table column sides).
+  const BLOCK_TAGS = "p, li, ul, ol, h1, h2, h3, h4, h5, h6, blockquote, dd, dt, td, th, summary, figcaption";
 
-  // Block-level text containers produced by Claude's markdown renderer.
-  // NOTE: "[class*='whitespace-pre-wrap']" is the one Claude-specific hook
-  // (it catches user-message bubbles, which are not semantic <p> elements).
-  // It is the most likely thing to need maintenance if Claude changes its
-  // markup; everything else here is standard HTML and stable.
-  const CONTENT_SELECTOR = [
-    "p", "li", "ul", "ol",
-    "h1", "h2", "h3", "h4", "h5", "h6",
-    "blockquote", "dd", "dt", "td", "th", "summary", "figcaption",
-    "[class*='whitespace-pre-wrap']",
-  ].join(", ");
+  // Everything we may try to flip; applyContentDir() self-guards to MESSAGE_SCOPE.
+  const PROCESS_SELECTOR = MESSAGE_SCOPE + ", " + BLOCK_TAGS;
 
-  // Never set direction on these (handled separately or must stay LTR).
+  // Never set direction on these (must stay LTR, or handled separately).
   const SKIP_SELECTOR = "pre, code, .katex, .katex-display, [contenteditable], textarea, input, [data-rtl-skip]";
 
   // The message composer and the "edit message" box.
   const EDITABLE_SELECTOR = '[contenteditable="true"], textarea';
 
-  // Attributes used to mark elements we have modified, so we can both avoid
-  // redundant writes and cleanly revert when the extension is disabled.
+  // Markers for elements we modified — used to skip redundant writes and to
+  // cleanly revert when the extension is disabled.
   const CONTENT_MARK = "data-rtl-dir";
   const INPUT_MARK = "data-rtl-input";
 
@@ -60,15 +57,16 @@
     if (!el || el.nodeType !== 1) return;
 
     const prev = el.getAttribute(CONTENT_MARK);
-    // The skip-ancestry of a node never changes, so only test it once (before
-    // the node has ever been marked). This keeps the per-token streaming path
-    // off the relatively expensive closest() ancestor walk.
-    if (prev === null && el.closest(SKIP_SELECTOR)) return;
+    if (prev === null) {
+      // First encounter: validate the element is in-scope and not a no-flip
+      // zone. Scope/skip status doesn't change later, so we only test once.
+      if (el.closest(SKIP_SELECTOR)) return;
+      if (!el.closest(MESSAGE_SCOPE)) return;
+    }
 
-    const dir = detectDir(el.textContent);
+    const dir = detectDir(el.textContent); // "rtl" | null
     if (!dir) {
-      // Arabic disappeared (e.g. an edited or rewritten block). Undo our
-      // change so the element returns to Claude's default direction.
+      // RTL text disappeared (edited/rewritten block) — undo our change.
       if (prev !== null) {
         el.removeAttribute("dir");
         el.removeAttribute(CONTENT_MARK);
@@ -84,9 +82,8 @@
   function applyEditorDir(el) {
     if (!el || el.nodeType !== 1) return;
     const text = "value" in el && typeof el.value === "string" ? el.value : el.textContent;
-    // While there is text, follow it (an English draft reads left-to-right).
-    // While the box is empty, leave its direction untouched so we never
-    // force-flip an empty (or RTL-defaulted) composer.
+    // While there is text, follow it (a Latin draft reads left-to-right). While
+    // the box is empty, leave its direction untouched.
     const dir = detectDir(text) || (text && text.trim() ? "ltr" : null);
     if (!dir) return;
     if (el.getAttribute("dir") !== dir) el.setAttribute("dir", dir);
@@ -104,7 +101,7 @@
   }
 
   function processTree(root) {
-    eachMatch(root, CONTENT_SELECTOR, applyContentDir);
+    eachMatch(root, PROCESS_SELECTOR, applyContentDir);
   }
 
   function processEditors(root) {
@@ -128,7 +125,6 @@
   // into one animation frame and split it by kind:
   //   - trees:  newly added subtrees -> full scan (structure may be new)
   //   - blocks: text changed in an existing block -> just re-check that block
-  //             (no subtree query needed)
 
   let pendingTrees = new Set();
   let pendingBlocks = new Set();
@@ -167,7 +163,7 @@
         }
       } else if (m.type === "characterData") {
         const parent = m.target.parentElement;
-        const block = parent && parent.closest(CONTENT_SELECTOR);
+        const block = parent && parent.closest(PROCESS_SELECTOR);
         if (block) { pendingBlocks.add(block); scheduled = true; }
       }
     }
@@ -217,7 +213,6 @@
   }
 
   function init() {
-    // Bail if the extension context is gone (e.g. reloaded/updated).
     if (!chrome.runtime || !chrome.runtime.id || !chrome.storage) return;
     chrome.storage[RTL_CONFIG.storageArea].get(RTL_CONFIG.defaults, (stored) => {
       if (chrome.runtime.lastError) stored = RTL_CONFIG.defaults;

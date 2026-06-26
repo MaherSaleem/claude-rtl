@@ -1,4 +1,4 @@
-# Privacy Policy — Arabic RTL for Claude
+# Privacy Policy — RTLify for Claude
 
 **Last updated: 2026**
 

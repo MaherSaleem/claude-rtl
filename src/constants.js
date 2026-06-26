@@ -1,5 +1,5 @@
 /*
- * Arabic RTL for Claude — shared configuration.
+ * RTLify for Claude — shared configuration.
  *
  * Loaded first in every context (content script, popup, service worker) so the
  * settings keys, their defaults, and the storage area live in exactly one

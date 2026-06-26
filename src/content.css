@@ -1,5 +1,5 @@
 /*
- * Arabic RTL for Claude — content styles
+ * RTLify for Claude — content styles
  *
  * Only elements the content script has marked (data-rtl-dir) are affected,
  * so Claude's own layout and untouched English content stay exactly as-is.

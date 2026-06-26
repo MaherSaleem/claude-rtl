@@ -188,6 +188,12 @@ html[dir="rtl"] .switch input:checked + .slider::before {
   border-top: 1px solid var(--line);
 }
 
+.footer-links {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .repo-link {
   display: inline-flex;
   align-items: center;
@@ -198,7 +204,16 @@ html[dir="rtl"] .switch input:checked + .slider::before {
   transition: color 0.15s ease;
 }
 
-.repo-link:hover {
+.coffee-link {
+  display: inline-flex;
+  align-items: center;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.repo-link:hover,
+.coffee-link:hover {
   color: var(--accent);
 }
 

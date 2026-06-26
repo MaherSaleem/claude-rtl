@@ -6,7 +6,7 @@ just bundles the runtime files (manifest, src/, icons/, LICENSE) into a clean
 ZIP, excluding dev-only files (tests, CI, docs, this script). Pure standard
 library, no dependencies.
 
-Output: dist/arabic-rtl-for-claude-v<version>.zip
+Output: dist/rtlify-for-claude-v<version>.zip
 """
 
 import json
@@ -40,7 +40,7 @@ def main():
 
     dist = os.path.join(ROOT, "dist")
     os.makedirs(dist, exist_ok=True)
-    out = os.path.join(dist, f"arabic-rtl-for-claude-v{version}.zip")
+    out = os.path.join(dist, f"rtlify-for-claude-v{version}.zip")
 
     members = collect()
     with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:

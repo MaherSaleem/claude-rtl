@@ -1,5 +1,5 @@
 /*
- * Arabic RTL for Claude — background service worker (Manifest V3).
+ * RTLify for Claude — background service worker (Manifest V3).
  * Seeds default settings on install so the extension works out of the box.
  */
 
