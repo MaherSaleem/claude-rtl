@@ -8,31 +8,7 @@
   "use strict";
 
   const { storageArea, defaults } = RTL_CONFIG;
-
-  const STRINGS = {
-    ar: {
-      title: "RTLify for Claude",
-      tagline: "عرض النصوص من اليمين إلى اليسار في Claude",
-      enable: "تفعيل الإضافة",
-      enableInput: "تفعيل في مربع الكتابة",
-      language: "لغة الواجهة",
-      arabic: "العربية",
-      english: "English",
-      sourceTitle: "اعرض الكود المصدري على GitHub — يعمل محليًا بالكامل، بدون جمع أي بيانات",
-      coffeeTitle: "ادعمني بكوب قهوة ☕",
-    },
-    en: {
-      title: "RTLify for Claude",
-      tagline: "Show right-to-left text in Claude",
-      enable: "Enable extension",
-      enableInput: "Enable in the input box",
-      language: "Interface language",
-      arabic: "العربية",
-      english: "English",
-      sourceTitle: "View the source code on GitHub — runs fully locally, collects no data",
-      coffeeTitle: "Buy me a coffee",
-    },
-  };
+  const STRINGS = RTL_STRINGS; // from strings.js
 
   const els = {
     html: document.documentElement,
@@ -46,14 +22,13 @@
     const dict = STRINGS[lang] || STRINGS.ar;
     els.html.setAttribute("lang", lang);
     els.html.setAttribute("dir", lang === "ar" ? "rtl" : "ltr");
-    document.querySelectorAll("[data-i18n]").forEach((node) => {
-      const key = node.getAttribute("data-i18n");
-      if (dict[key]) node.textContent = dict[key];
-    });
-    document.querySelectorAll("[data-i18n-title]").forEach((node) => {
-      const key = node.getAttribute("data-i18n-title");
-      if (dict[key]) node.setAttribute("title", dict[key]);
-    });
+    const apply = (attr, set) =>
+      document.querySelectorAll("[" + attr + "]").forEach((node) => {
+        const value = dict[node.getAttribute(attr)];
+        if (value) set(node, value);
+      });
+    apply("data-i18n", (node, value) => { node.textContent = value; });
+    apply("data-i18n-title", (node, value) => { node.setAttribute("title", value); });
   }
 
   // The "input box" option only makes sense while the extension is on.

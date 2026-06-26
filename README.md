@@ -129,7 +129,8 @@ src/
   background.js          seeds default settings on install
   popup.html             popup markup
   popup.css              popup styling
-  popup.js               popup logic + Arabic/English localization
+  popup.js               popup logic
+  strings.js             popup interface strings (Arabic/English), unit-tested
 icons/                   generated PNG icons (16/32/48/128)
 scripts/
   make_icons.py          regenerates the icons (pure Python, no dependencies)

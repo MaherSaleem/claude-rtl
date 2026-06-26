@@ -69,10 +69,7 @@ test("popup i18n keys are defined in both Arabic and English", () => {
   for (const m of html.matchAll(/data-i18n(?:-title)?="([^"]+)"/g)) keys.add(m[1]);
   assert.ok(keys.size > 0, "found at least one i18n key in popup.html");
 
-  const popupSrc = fs.readFileSync(path.join(root, "src/popup.js"), "utf8");
-  const block = popupSrc.match(/const STRINGS = (\{[\s\S]*?\n {2}\};)/);
-  assert.ok(block, "located the STRINGS table in popup.js");
-  const STRINGS = eval("(" + block[1].slice(0, -1) + ")");
+  const STRINGS = require("../src/strings.js");
 
   for (const lang of ["ar", "en"]) {
     for (const key of keys) {

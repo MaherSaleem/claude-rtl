@@ -5,7 +5,7 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
-    "check": "node --check src/constants.js && node --check src/detect.js && node --check src/content.js && node --check src/popup.js && node --check src/background.js",
+    "check": "node --check src/constants.js && node --check src/detect.js && node --check src/strings.js && node --check src/content.js && node --check src/popup.js && node --check src/background.js",
     "test": "node --test",
     "ci": "npm run check && npm test",
     "icons": "python3 scripts/make_icons.py",

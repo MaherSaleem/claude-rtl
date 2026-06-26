@@ -1,5 +1,5 @@
 /*
- * RTL for Claude — content script
+ * RTLify for Claude — content script
  *
  * Detects right-to-left (Arabic-script) text inside Claude AI message content
  * and flips the affected elements to RTL — and, optionally, the composer.
@@ -41,6 +41,8 @@
   const PROCESS_SELECTOR = MESSAGE_SCOPE + ", " + BLOCK_TAGS;
 
   // Never set direction on these (must stay LTR, or handled separately).
+  // The code/math entries here mirror the LTR-isolation rules in content.css —
+  // keep the two in sync if you add another element that must stay LTR.
   const SKIP_SELECTOR = "pre, code, .katex, .katex-display, [contenteditable], textarea, input, [data-rtl-skip]";
 
   // The message composer and the "edit message" box.
@@ -90,14 +92,12 @@
     if (!el.hasAttribute(INPUT_MARK)) el.setAttribute(INPUT_MARK, "1");
   }
 
-  // Apply `fn` to `root` and every descendant matching `selector`.
+  // Apply `fn` to `root` (an Element) and every descendant matching `selector`.
   function eachMatch(root, selector, fn) {
     if (!root || root.nodeType !== 1) return;
-    if (root.matches && root.matches(selector)) fn(root);
-    if (root.querySelectorAll) {
-      const nodes = root.querySelectorAll(selector);
-      for (let i = 0; i < nodes.length; i++) fn(nodes[i]);
-    }
+    if (root.matches(selector)) fn(root);
+    const nodes = root.querySelectorAll(selector);
+    for (let i = 0; i < nodes.length; i++) fn(nodes[i]);
   }
 
   function processTree(root) {
@@ -158,8 +158,14 @@
     for (const m of mutations) {
       if (m.type === "childList") {
         for (const node of m.addedNodes) {
-          if (node.nodeType === 1) { pendingTrees.add(node); scheduled = true; }
-          else if (node.nodeType === 3 && node.parentElement) { pendingTrees.add(node.parentElement); scheduled = true; }
+          if (node.nodeType === 1) {
+            pendingTrees.add(node); scheduled = true;
+          } else if (node.nodeType === 3 && node.parentElement) {
+            // An added text node only needs its enclosing block re-checked, not
+            // a full subtree scan (this is the common streaming case).
+            const block = node.parentElement.closest(PROCESS_SELECTOR);
+            if (block) { pendingBlocks.add(block); scheduled = true; }
+          }
         }
       } else if (m.type === "characterData") {
         const parent = m.target.parentElement;

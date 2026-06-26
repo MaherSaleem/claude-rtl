@@ -42,6 +42,8 @@ src/
   detect.js     self.RTL_DETECT = { detectDir }. detectDir(text) -> "rtl" | null
                 ("rtl" when the text contains any Arabic-script char). Also
                 CommonJS-exported so test/ can require it. UNIT-TESTED.
+  strings.js    self.RTL_STRINGS = { ar, en } popup i18n table. Same dual
+                browser/CommonJS export as detect.js (the test requires it).
   content.js    The core. Scans message content, applies dir="rtl". See below.
   content.css   Alignment + isolates code/KaTeX as LTR inside RTL blocks.
   background.js  Service worker; seeds defaults on install. Uses
@@ -83,10 +85,11 @@ test/           node:test suite (detection + manifest validation).
 
 ## Conventions / gotchas
 
-- `RTL_CONFIG` and `RTL_DETECT` are globals shared via `self.X = ...`. They work
-  because all files in one `content_scripts` entry share an isolated world, the
-  popup loads `constants.js`/`detect.js` before `popup.js`, and the worker
-  `importScripts` them. If you add a new context, load the shared files first.
+- `RTL_CONFIG` / `RTL_DETECT` / `RTL_STRINGS` are globals shared via
+  `self.X = ...`. They work because all files in one `content_scripts` entry
+  share an isolated world, the popup loads `constants.js`/`strings.js` before
+  `popup.js`, and the worker `importScripts` them. If you add a new context,
+  load the shared files first.
 - `importScripts("constants.js")` in `background.js` is **worker-relative**
   (resolves to `src/constants.js`). Do NOT change it to `"src/constants.js"`.
 - Keep `manifest.json` `description` ≤ 132 chars (a test enforces this).
