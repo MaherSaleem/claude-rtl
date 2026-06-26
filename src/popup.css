@@ -194,16 +194,7 @@ html[dir="rtl"] .switch input:checked + .slider::before {
   gap: 12px;
 }
 
-.repo-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  color: var(--muted);
-  text-decoration: none;
-  font-size: 12px;
-  transition: color 0.15s ease;
-}
-
+.repo-link,
 .coffee-link {
   display: inline-flex;
   align-items: center;
