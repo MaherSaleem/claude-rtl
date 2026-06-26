@@ -1,0 +1,19 @@
+{
+  "name": "arabic-rtl-for-claude",
+  "version": "1.0.0",
+  "description": "Open-source Chrome extension that shows Arabic text right-to-left in Claude AI.",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "check": "node --check src/constants.js && node --check src/detect.js && node --check src/content.js && node --check src/popup.js && node --check src/background.js",
+    "test": "node --test",
+    "ci": "npm run check && npm test",
+    "icons": "python3 scripts/make_icons.py",
+    "build": "python3 scripts/build_zip.py"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MaherSaleem/claude-rtl.git"
+  },
+  "license": "MIT"
+}
