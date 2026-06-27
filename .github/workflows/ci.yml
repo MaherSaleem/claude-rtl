@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    name: Lint & test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Syntax check (node --check)
+        run: npm run check
+
+      - name: Run tests (node --test)
+        run: npm test
+
+      - name: Verify icons can be regenerated
+        run: python3 scripts/make_icons.py

@@ -1,0 +1,50 @@
+/*
+ * RTLify for Claude — content styles
+ *
+ * Only elements the content script has marked (data-rtl-dir) are affected,
+ * so Claude's own layout and untouched English content stay exactly as-is.
+ */
+
+/* Align flipped text to the correct edge. The dir attribute already sets the
+   writing direction; we make the alignment explicit so Claude's utility
+   classes (e.g. text-left) cannot override it. Covers both response content
+   (data-rtl-dir) and the composer / edit box (data-rtl-input). */
+[data-rtl-dir="rtl"],
+[data-rtl-input][dir="rtl"] {
+  text-align: right;
+}
+[data-rtl-dir="ltr"],
+[data-rtl-input][dir="ltr"] {
+  text-align: left;
+}
+
+/* Lists: move bullets / numbers to the right for RTL lists. */
+ul[data-rtl-dir="rtl"],
+ol[data-rtl-dir="rtl"] {
+  padding-right: 1.5em;
+  padding-left: 0;
+}
+
+/* Keep code and pre blocks left-to-right and isolated, even when they sit
+   inside an RTL paragraph or list item. */
+[data-rtl-dir="rtl"] code,
+[data-rtl-dir="rtl"] kbd,
+[data-rtl-dir="rtl"] samp,
+[data-rtl-dir="rtl"] pre {
+  direction: ltr;
+  unicode-bidi: isolate;
+  text-align: left;
+}
+
+/* Keep KaTeX / LaTeX math in its correct left-to-right reading order so
+   formulas embedded in Arabic text do not get reordered or broken. */
+[data-rtl-dir="rtl"] .katex,
+[data-rtl-dir="rtl"] .katex-display,
+[data-rtl-dir="rtl"] .katex-mathml,
+[data-rtl-dir="rtl"] math {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+[data-rtl-dir="rtl"] .katex-display {
+  text-align: center;
+}
