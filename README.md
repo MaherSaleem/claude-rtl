@@ -1,11 +1,30 @@
-# RTLify for Claude
+# RTLify for Claude — fix Arabic & right-to-left (RTL) text in Claude AI
 
-> Make right-to-left text display correctly in [Claude AI](https://claude.ai) —
-> in responses, in your messages, and in the input box. Works for **Arabic,
-> Persian/Farsi, Urdu** and other Arabic-script languages.
+> **Fix broken Arabic, Persian/Farsi, Urdu and other right-to-left (RTL) text in
+> [Claude AI](https://claude.ai).** RTLify automatically detects Arabic-script
+> text and displays it right-to-left — in Claude's responses, in your own
+> messages, and in the input box — so your conversations read naturally instead
+> of misaligned left-to-right. A **100% local, open-source** Chrome extension
+> with no tracking and no network requests.
 
-**Repository:** https://github.com/MaherSaleem/claude-rtl
-**License:** [MIT](LICENSE) · **Manifest:** V3 · **Dependencies:** none
+[![Install from the Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-Install-4285F4?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/rtlify-for-claude/bfnpdbijenopgolpjameikababikhcie)
+&nbsp;[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+&nbsp;![Manifest V3](https://img.shields.io/badge/Manifest-V3-blue)
+&nbsp;![Dependencies: none](https://img.shields.io/badge/dependencies-none-brightgreen)
+
+**▶️ Install now:** [Chrome Web Store](https://chromewebstore.google.com/detail/rtlify-for-claude/bfnpdbijenopgolpjameikababikhcie)
+· **Source:** https://github.com/MaherSaleem/rtlify-for-claude
+
+> <div dir="rtl">
+>
+> **عربي:** إضافة مجانية ومفتوحة المصدر لمتصفح كروم تُصلح اتجاه النص العربي في
+> [Claude AI](https://claude.ai). تكتشف النص العربي تلقائيًا وتعرضه من اليمين
+> إلى اليسار في ردود Claude ورسائلك ومربع الكتابة، بدون أي تتبّع أو إرسال
+> للبيانات — كل شيء يعمل محليًا داخل متصفحك. تدعم العربية والفارسية والأردية
+> والبشتو والكردية وغيرها من اللغات المكتوبة بالحروف العربية.
+> [التثبيت من متجر كروم](https://chromewebstore.google.com/detail/rtlify-for-claude/bfnpdbijenopgolpjameikababikhcie).
+>
+> </div>
 
 A small, **fully open-source** Chrome/Chromium extension (Manifest V3, vanilla
 JavaScript — no build step, no bundler, no libraries). It exists because the
@@ -23,7 +42,7 @@ only the `storage` permission, and **never makes a single network request**.
 ## Table of contents
 
 - [Features](#features)
-- [Install](#install-load-unpacked)
+- [Install](#install)
 - [Usage & settings](#usage--settings)
 - [Privacy & permissions](#privacy--permissions)
 - [How it works](#how-it-works)
@@ -57,14 +76,22 @@ only the `storage` permission, and **never makes a single network request**.
   choose the interface language (العربية / English).
 - **Zero data, zero network.** Nothing is collected or sent anywhere.
 
-## Install (load unpacked)
+## Install
 
-Until it's published on the Chrome Web Store, install it manually — it takes a
-minute:
+### Recommended: Chrome Web Store
+
+**[➜ Install RTLify for Claude from the Chrome Web Store](https://chromewebstore.google.com/detail/rtlify-for-claude/bfnpdbijenopgolpjameikababikhcie)**
+
+One click, automatic updates. Works in Chrome, Edge, Brave, and any Chromium
+browser. Open [claude.ai](https://claude.ai) and start chatting — it just works. 🎉
+
+### Alternative: load unpacked (for development)
+
+To run from source — to hack on it, or before a store update lands:
 
 1. **Download the code:**
    ```bash
-   git clone https://github.com/MaherSaleem/claude-rtl.git
+   git clone https://github.com/MaherSaleem/rtlify-for-claude.git
    ```
    (or download the ZIP from GitHub and unzip it).
 2. Open `chrome://extensions` in Chrome / Edge / Brave / any Chromium browser.
@@ -184,9 +211,22 @@ Bump `"version"` in `manifest.json` before each store release.
 
 ## FAQ
 
+**Why does Arabic text look broken / left-aligned in Claude AI?**
+By default the Claude web app renders text left-to-right, so Arabic-script
+languages appear misaligned and hard to read. RTLify fixes this by detecting
+Arabic-script text and setting the correct right-to-left direction
+automatically.
+
+**How do I fix Arabic / Persian / Urdu text direction in Claude?**
+Install RTLify for Claude from the
+[Chrome Web Store](https://chromewebstore.google.com/detail/rtlify-for-claude/bfnpdbijenopgolpjameikababikhcie),
+open [claude.ai](https://claude.ai), and your right-to-left text will display
+correctly — no setup required.
+
 **Which languages does it support?**
 Any language written in the Arabic script — Arabic, Persian/Farsi, Urdu,
-Pashto, Kurdish, Sindhi, and others.
+Pashto, Kurdish, Sindhi, and others. (Hebrew is a different script and is not
+currently covered.)
 
 **Does it send my chats anywhere?**
 No. It makes zero network requests. The only data it stores is your three
@@ -208,7 +248,7 @@ the extension is and will stay free and open source.
 ## Contributing
 
 Issues and pull requests are welcome on
-[GitHub](https://github.com/MaherSaleem/claude-rtl). This is a small, dependency-free
+[GitHub](https://github.com/MaherSaleem/rtlify-for-claude). This is a small, dependency-free
 codebase that's easy to read and hack on.
 
 ## License
