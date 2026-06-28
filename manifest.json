@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "RTLify for Claude",
-  "version": "1.0.0",
+  "name": "RTLify for Claude — Arabic & RTL Fix",
+  "version": "1.0.1",
   "description": "Open-source extension that displays right-to-left text — Arabic, Persian, Urdu and more — in Claude AI. 100% local, no data.",
   "icons": {
     "16": "icons/icon16.png",
