@@ -225,8 +225,7 @@ correctly — no setup required.
 
 **Which languages does it support?**
 Any language written in the Arabic script — Arabic, Persian/Farsi, Urdu,
-Pashto, Kurdish, Sindhi, and others. (Hebrew is a different script and is not
-currently covered.)
+Pashto, Kurdish, Sindhi, and others.
 
 **Does it send my chats anywhere?**
 No. It makes zero network requests. The only data it stores is your three
