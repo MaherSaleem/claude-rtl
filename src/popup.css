@@ -195,7 +195,8 @@ html[dir="rtl"] .switch input:checked + .slider::before {
 }
 
 .repo-link,
-.coffee-link {
+.coffee-link,
+.store-link {
   display: inline-flex;
   align-items: center;
   color: var(--muted);
@@ -204,7 +205,8 @@ html[dir="rtl"] .switch input:checked + .slider::before {
 }
 
 .repo-link:hover,
-.coffee-link:hover {
+.coffee-link:hover,
+.store-link:hover {
   color: var(--accent);
 }
 
