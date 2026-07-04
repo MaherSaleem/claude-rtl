@@ -123,11 +123,20 @@
   //
   // The observer fires constantly while a response streams. We coalesce work
   // into one animation frame and split it by kind:
-  //   - trees:  newly added subtrees -> full scan (structure may be new)
-  //   - blocks: text changed in an existing block -> just re-check that block
+  //   - trees:   newly added subtrees -> full scan (structure may be new)
+  //   - blocks:  text changed in an existing block -> just re-check that block
+  //   - editors: text changed inside the composer / edit box -> re-check that
+  //              editor. This path matters because rich editors (Claude's
+  //              composer is ProseMirror) apply paste / undo / cut / dictation
+  //              via their own transactions WITHOUT firing a native `input`
+  //              event, so the onInput listener never sees them. The observer
+  //              is the only signal for those, and applyContentDir skips
+  //              editors (they are in SKIP_SELECTOR), so they need their own
+  //              queue routed to applyEditorDir.
 
   let pendingTrees = new Set();
   let pendingBlocks = new Set();
+  let pendingEditors = new Set();
   let frameRequested = false;
 
   function requestFlush() {
@@ -140,14 +149,17 @@
     frameRequested = false;
     const trees = pendingTrees;
     const blocks = pendingBlocks;
+    const editors = pendingEditors;
     pendingTrees = new Set();
     pendingBlocks = new Set();
+    pendingEditors = new Set();
     if (!settings.enabled) return;
     trees.forEach((node) => {
       processTree(node);
       processEditors(node);
     });
     blocks.forEach(applyContentDir);
+    if (settings.inputBoxEnabled) editors.forEach(applyEditorDir);
   }
 
   // ---- Observer / listeners ------------------------------------------------
@@ -163,14 +175,22 @@
           } else if (node.nodeType === 3 && node.parentElement) {
             // An added text node only needs its enclosing block re-checked, not
             // a full subtree scan (this is the common streaming case).
+            const editor = node.parentElement.closest(EDITABLE_SELECTOR);
+            if (editor) { pendingEditors.add(editor); scheduled = true; }
             const block = node.parentElement.closest(PROCESS_SELECTOR);
             if (block) { pendingBlocks.add(block); scheduled = true; }
           }
         }
       } else if (m.type === "characterData") {
         const parent = m.target.parentElement;
-        const block = parent && parent.closest(PROCESS_SELECTOR);
-        if (block) { pendingBlocks.add(block); scheduled = true; }
+        if (parent) {
+          // Text edited inside the composer (paste / undo / cut / dictation)
+          // that fired no `input` event — re-check the editor's direction.
+          const editor = parent.closest(EDITABLE_SELECTOR);
+          if (editor) { pendingEditors.add(editor); scheduled = true; }
+          const block = parent.closest(PROCESS_SELECTOR);
+          if (block) { pendingBlocks.add(block); scheduled = true; }
+        }
       }
     }
     if (scheduled) requestFlush();
