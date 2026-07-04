@@ -20,6 +20,7 @@
       english: "English",
       sourceTitle: "اعرض الكود المصدري على GitHub — يعمل محليًا بالكامل، بدون جمع أي بيانات",
       coffeeTitle: "ادعمني بكوب قهوة ☕",
+      storeTitle: "قيّم الإضافة على متجر Chrome",
     },
     en: {
       title: "RTLify for Claude",
@@ -31,6 +32,7 @@
       english: "English",
       sourceTitle: "View the source code on GitHub — runs fully locally, collects no data",
       coffeeTitle: "Buy me a coffee",
+      storeTitle: "Rate & review on the Chrome Web Store",
     },
   };
 
