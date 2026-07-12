@@ -94,6 +94,13 @@ test/           node:test suite (detection + manifest validation).
   (resolves to `src/constants.js`). Do NOT change it to `"src/constants.js"`.
 - Keep `manifest.json` `description` ≤ 132 chars (a test enforces this).
 - If you change settings keys/defaults, edit them **only** in `constants.js`.
+- **Chrome Web Store listing text has two sources.** The store **title** and
+  short summary come from `manifest.json` (`name` / `description`) — the title
+  is NOT editable in the dashboard, so changing it means editing `name`, bumping
+  `version`, `npm run build`, and re-uploading the ZIP. The **long store
+  description** is dashboard-only (the store does not pull from GitHub); its
+  source-of-record copy lives in `store-assets/store-listing.md`, with SEO /
+  ratings / traffic guidance in `store-assets/growth-notes.md`.
 
 ## Developing & testing
 
@@ -108,7 +115,9 @@ npm run build   # package dist/rtlify-for-claude-v<version>.zip for the Web Stor
 ```
 
 No build/transpile step exists or should be added — `npm run build` only zips the
-runtime files. Bump `manifest.json` `version` before each store release.
+runtime files. Bump `manifest.json` `version` before each store release, and
+bump `package.json` `version` to match (the build reads the version from
+`manifest.json`, but keep the two in sync as hygiene).
 
 Load it in the browser: `chrome://extensions` → Developer mode → **Load
 unpacked** → select the repo root → **Reload** ↻ after edits.
