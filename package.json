@@ -1,6 +1,6 @@
 {
   "name": "rtlify-for-claude",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Open-source Chrome extension that displays right-to-left text in Claude AI.",
   "private": true,
   "type": "commonjs",
