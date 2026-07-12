@@ -11,20 +11,26 @@ searching in Arabic, Persian, Urdu, Kurdish, and Pashto.
 
 ---
 
-## Title (dashboard → "Store listing" → Title)
+## Title — comes from `manifest.json` → `name` (NOT the dashboard)
+
+The store title is **not editable in the dashboard** — it mirrors
+`manifest.json` → `name`. To change it you must:
+1. edit `name` in `manifest.json`,
+2. bump `version`,
+3. run `npm run build`,
+4. re-upload the ZIP in the Developer Dashboard.
+
+Proposed new `name`:
 
 ```
 RTLify for Claude — Arabic, Persian & RTL Text Fix
 ```
 
-- 50 characters. If the dashboard rejects it (some locales cap at ~45), use:
+- 50 characters. If the store rejects it (some locales cap at ~45), use
   `RTLify for Claude — Arabic, Persian & RTL Fix` (46 chars), or keep the
   current `RTLify for Claude — Arabic & RTL Fix`.
 - The title is the single strongest ranking signal — keep the primary keywords
   (Arabic, Persian, RTL, Claude) in the first ~45 characters.
-- **Note:** the store title mirrors `manifest.json` → `name`. To change the live
-  title you must edit `name`, bump `version`, run `npm run build`, and re-upload
-  the ZIP. (The `description` field below is separate short summary text.)
 
 ## Short summary (`manifest.json` → `description`, ≤132 chars)
 
